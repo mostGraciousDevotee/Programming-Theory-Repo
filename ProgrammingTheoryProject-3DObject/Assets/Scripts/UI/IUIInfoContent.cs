@@ -1,5 +1,5 @@
 
-namespace ThreeDObject.Main
+namespace ThreeDObject.UI
 {
     public interface IUIInfoContent
     {

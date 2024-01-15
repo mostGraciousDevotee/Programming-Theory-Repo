@@ -1,3 +1,4 @@
+using ThreeDObject.UI;
 using UnityEngine;
 
 namespace ThreeDObject.Main
@@ -20,7 +21,15 @@ namespace ThreeDObject.Main
 
             if (Physics.Raycast(ray, out hit))
             {
+                // TODO: GetComponent in Parent to maintain scale.
                 _selected = hit.collider.GetComponent<Polygon3D>();
+                
+                IUIInfoContent content = hit.collider.GetComponent<IUIInfoContent>();
+                UIMain.Instance.UpdateContent(content);
+            }
+            else
+            {
+                _selected = null;
             }
         }
 
@@ -37,7 +46,7 @@ namespace ThreeDObject.Main
                 _marker.SetActive(true);
                 _marker.transform.SetParent(_selected.transform, false);
 
-                // TODO: Adjust marker transform.
+                _marker.transform.localPosition = new Vector3(0, 1.5f, 0);
             }
         }
 

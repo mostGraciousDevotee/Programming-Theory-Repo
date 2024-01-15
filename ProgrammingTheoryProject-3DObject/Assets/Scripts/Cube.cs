@@ -6,7 +6,15 @@ namespace ThreeDObject.Main
 {
     public class Cube : Polygon3D
     {
-        
+        public override string GetName()
+        {
+            return "Cube";
+        }
+
+        public override string GetData()
+        {
+            return "1";
+        }
     }
 }
 
