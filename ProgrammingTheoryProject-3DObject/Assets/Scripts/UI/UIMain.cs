@@ -1,4 +1,5 @@
 using UnityEngine;
+using ThreeDObject.Main;
 
 namespace ThreeDObject.UI
 {
@@ -6,12 +7,11 @@ namespace ThreeDObject.UI
     {
         public static UIMain Instance { get; private set; }
         [SerializeField] InfoPopUp _popUp;
-        IUIInfoContent _currentContent;
 
         void Awake()
         {
             Instance = this;
-            // TODO Add InfoPopUp code here
+            _popUp.gameObject.SetActive(false);
         }
 
         void OnDestroy()
@@ -28,18 +28,17 @@ namespace ThreeDObject.UI
             else
             {
                 _popUp.gameObject.SetActive(true);
-                // _currentContent = content;
 
-                // TODO:
-                // - update content name
-                // - update content data
-                // - clear content
-
+                float scale = content.GetScale();
+                _popUp.SetScaleSlider(scale);
                 _popUp.Name.text = content.GetName();
-                _popUp.Volume.text = content.GetData();
+                _popUp.Volume.text = content.GetVolume();
             }
+        }
 
-            // TODO PRINT CONTENT TO UIPANEL
+        public void HandleScaleChange(float scale)
+        {
+            UserControl.Instance.HandleScaleChange(scale);
         }
     }
 }

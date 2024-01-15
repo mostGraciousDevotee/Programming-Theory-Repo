@@ -5,10 +5,21 @@ namespace ThreeDObject.Main
 {
     public class UserControl : MonoBehaviour
     {
+        
+        // ENCAPSULATION
+        public static UserControl Instance { get; private set; }
         [SerializeField] Camera _camera;
         [SerializeField] GameObject _marker;
         Polygon3D _selected;
 
+        void Awake()
+        {
+            Instance = this;
+        }
+        void OnDestroy()
+        {
+            Instance = null;
+        }
         void Start()
         {
             _marker.SetActive(false);
@@ -21,27 +32,23 @@ namespace ThreeDObject.Main
 
             if (Physics.Raycast(ray, out hit))
             {
-                // TODO: GetComponent in Parent to maintain scale.
-                _selected = hit.collider.GetComponent<Polygon3D>();
+                // POLYMORPHISM : All subclasses of Polygon3D can be treated as Polygon3D;
+                _selected = hit.collider.GetComponentInParent<Polygon3D>();
                 
-                IUIInfoContent content = hit.collider.GetComponent<IUIInfoContent>();
+                IUIInfoContent content = hit.collider.GetComponentInParent<IUIInfoContent>();
                 UIMain.Instance.UpdateContent(content);
             }
-            else
-            {
-                _selected = null;
-            }
+        }
+
+        void HandleDeselection()
+        {
+            _marker.SetActive(false);
+            _marker.transform.SetParent(null);
         }
 
         void HandleMarker()
         {
-            if (_selected == null && _marker.activeInHierarchy)
-            {
-                _marker.SetActive(false);
-                _marker.transform.SetParent(null);
-            }
-
-            else if (_selected != null && _marker.transform.parent != _selected.transform)
+            if (_selected != null && _marker.transform.parent != _selected.transform)
             {
                 _marker.SetActive(true);
                 _marker.transform.SetParent(_selected.transform, false);
@@ -52,12 +59,24 @@ namespace ThreeDObject.Main
 
         void Update()
         {
+            // ABSTRACTION : All code in Update is abstracted away in each individual code.
             if (Input.GetMouseButtonDown(0))
             {
                 HandleSelection();
             }
+            if (Input.GetMouseButtonDown(1))
+            {
+                HandleDeselection();
+            }
 
             HandleMarker();
+        }
+
+        public void HandleScaleChange(float scale)
+        {
+            _selected.HandleScaleChange(scale);
+            
+            UIMain.Instance.UpdateContent(_selected as IUIInfoContent);
         }
     }
 }
